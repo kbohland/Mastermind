@@ -29,25 +29,21 @@
         // calc pluses by finding digit overlap
         var pluses = guess.Zip(code, (x, y) => x == y).Count(x => x);
 
-        // calc all matches (plus and minus) by finding intersects and matches
+        // calc all matches (plus and minus) by finding intersecting values and matches in individual numbers
         var matches = 0;
         var intersects = guess.Intersect(code);
         foreach(var intersect in intersects) {
-          var codeMatches = code.Count(x => x == intersect);
-          var guessMatches = guess.Count(x => x == intersect);
-
           //account for digit limitations in either code or guess
-          matches += Math.Min(codeMatches, guessMatches);
+          matches += Math.Min(code.Count(x => x == intersect), guess.Count(x => x == intersect));
         }
-        var minuses = matches - pluses;
 
-        Console.WriteLine(string.Empty.PadLeft(pluses, '+') + string.Empty.PadLeft(minuses, '-'));
+        Console.WriteLine(string.Empty.PadLeft(pluses, '+') + string.Empty.PadLeft(matches - pluses, '-'));
         return pluses == 4;
     }
 
     private static char[] GenerateCode() {
       var rand = new Random();
-      var codeString = rand.Next(1,6).ToString() + rand.Next(1,6).ToString() + rand.Next(1,6).ToString() + rand.Next(1,6).ToString();
+      var codeString = string.Concat(rand.Next(1,6), rand.Next(1,6), rand.Next(1,6), rand.Next(1,6));
       return codeString.ToCharArray();
     }
 }
